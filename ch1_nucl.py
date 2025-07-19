@@ -1,4 +1,5 @@
 # string to bit gene nucleotide compression
+# ch1 1.2
 import sys
 
 class CompressedGene:
