@@ -30,10 +30,9 @@ def fibiter(n: int) -> int:
     return next
 
 def fibiter_gen(n: int) -> Generator[int, None, None]:
-    print(f"first time n is {n}")
+
     yield 0
     if n > 0:
-        print("seconds")
         yield 1
     
     last: int = 0
@@ -41,19 +40,45 @@ def fibiter_gen(n: int) -> Generator[int, None, None]:
 
     for _ in range(1, n):
         last, next = next, last + next
-        print('in loop')
         yield next
 
 #challenge question: Implement a fib implentation of your own design, use unit testing to 
 #compare against other implementations
 
+def custom_fib(n : int) -> int:
+    #combine memoization and iteration approach
+    if memo.get(n) is not None:
+        print("found with memo")
+        return memo[n]
+    
+    ele_1 = memo.get(n-1, None)
+    ele_2 = memo.get(n-2, None)
+    if ele_1 is not None and ele_2 is not None:
+        print("knows final 2")
+        memo[n] = ele_1 + ele_2
+        return memo[n]
+
+    last, next = memo[0], memo[1] # guarteed to exist
+
+    for i in range(n):
+        if memo.get(i) is None:
+            memo[i] = last
+        last, next = next, last+next
+
+    memo[n] = last
+    return memo[n]
+
 
 if __name__ == "__main__":
 
-    print(fib2(11))
-    print(fibmemo(50))
-    print(fiblru(50))
-    print(fibiter(50))
+    #print(fib2(11))
+    #print(fibmemo(50))
+    #print(fiblru(50))
+    #print(fibiter(50))
 
-    for i in fibiter_gen(2):
+    print(custom_fib(50))
+    print(custom_fib(40))
+    print(custom_fib(51))
+    print(memo)
+    for i in fibiter_gen(51):
         print(i)
