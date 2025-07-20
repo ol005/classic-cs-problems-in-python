@@ -11,4 +11,4 @@ def calculate_pi(n_terms: int) -> float:
     return pi
 
 if __name__ == "__main__":
-    print(calculate_pi(10000000))
+    print(calculate_pi(100000000))
