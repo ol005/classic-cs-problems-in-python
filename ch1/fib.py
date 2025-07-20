@@ -44,11 +44,16 @@ def fibiter_gen(n: int) -> Generator[int, None, None]:
         print('in loop')
         yield next
 
+#challenge question: Implement a fib implentation of your own design, use unit testing to 
+#compare against other implementations
 
-print(fib2(11))
-print(fibmemo(50))
-print(fiblru(50))
-print(fibiter(50))
 
-for i in fibiter_gen(2):
-    print(i)
+if __name__ == "__main__":
+
+    print(fib2(11))
+    print(fibmemo(50))
+    print(fiblru(50))
+    print(fibiter(50))
+
+    for i in fibiter_gen(2):
+        print(i)
