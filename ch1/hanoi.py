@@ -101,7 +101,6 @@ def main():
     for i in range(num_towers):
         towers.append(Stack())
 
-
     for i in range(num_discs, 0, -1):
         towers[0].push(i)
 
