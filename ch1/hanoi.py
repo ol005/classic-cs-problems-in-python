@@ -1,6 +1,6 @@
 # towers of hanoi solver
-
 from typing import TypeVar, Generic
+
 
 T = TypeVar('T')
 
@@ -43,7 +43,8 @@ def print_towers(towers: list[Stack[int]], n: int) -> None:
 # implement iter solution for tower of hanoi and variable number of towers
 
 # odd goes left, even discs move right
-def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> None:
+def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> int:
+    moves: int = 0
     smallest_move: bool = True
     end: Stack[int] = towers[-1]
     small_loci: int = 0
@@ -51,7 +52,8 @@ def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> None:
 
     #end condition:
     while(len(end) < discs):
-        print_towers(towers, discs)
+        moves += 1
+        #print_towers(towers, discs)
         if(smallest_move):
             #move smallest disc left if total is odd, right if total is even, looping
             towers[(small_loci + direction) % len(towers)].push(towers[small_loci].pop())
@@ -69,7 +71,19 @@ def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> None:
                 break
         smallest_move = not smallest_move
     print_towers(towers, discs)    
+    return moves
 
+#multiple hanoi towers challenge question
+def hanoi_multi(towers: list[Stack[int]], start_idx: int, end_idx: int, n: int) -> None:
+    if n == 1:
+        towers[end_idx].push(towers[start_idx].pop())
+    else:
+        aux_idx: int = tuple(set(range(0, len(towers))) - {start_idx, end_idx})[0]
+        hanoi_multi(towers, start_idx, aux_idx, n-1)
+        hanoi_multi(towers, start_idx, end_idx, 1)
+        hanoi_multi(towers, aux_idx, end_idx, n-1)
+
+#simple 3 tower solution
 def hanoi(begin: Stack[int], end: Stack[int], temp: Stack[int], n: int) -> None:
 
     if n == 1:
@@ -81,7 +95,7 @@ def hanoi(begin: Stack[int], end: Stack[int], temp: Stack[int], n: int) -> None:
 
 
 def main():
-    num_discs: int = 8
+    num_discs: int = 5
     num_towers: int = 3
     towers: list[Stack[int]] = []
     for i in range(num_towers):
@@ -92,7 +106,9 @@ def main():
         towers[0].push(i)
 
     #hanoi(twr_a, twr_c, twr_b, num_discs)
-    hanoi_iter(towers, num_discs, num_towers)
+    print(towers[0])
+    hanoi_multi(towers, 0, num_towers-1, num_discs)
+    print(towers[-1])
 
 if __name__ == "__main__":
     main()
