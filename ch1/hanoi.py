@@ -18,20 +18,58 @@ class Stack(Generic[T]):
     def get_list(self) -> list[T]:
         return self._container
 
+    def __len__(self) -> int:
+        return len(self._container)
+    
+    def peek(self) -> T:
+        return self._container[-1]
+    
     def __repr__(self) -> str:
         return repr(self._container)
 
 def print_towers(towers: list[Stack[int]], n: int) -> None:
-    
+    print('******************')
     for i in range(n-1, -1, -1):
         for twr in towers:
             li = twr.get_list()
             if len(li) > i:
                 print(f'| {li[i]} |', end='')
             else:
-                print('|  |', end='')
+                print('|   |', end='')
         print('')
-                
+    print('******************')
+
+# 1.7 challenge exercise question 3
+# implement iter solution for tower of hanoi and variable number of towers
+
+# odd goes left, even discs move right
+def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> None:
+    smallest_move: bool = True
+    end: Stack[int] = towers[-1]
+    small_loci: int = 0
+    direction: int = 1 if discs % 2 == 0 else -1
+
+    #end condition:
+    while(len(end) < discs):
+        print_towers(towers, discs)
+        if(smallest_move):
+            #move smallest disc left if total is odd, right if total is even, looping
+            towers[(small_loci + direction) % len(towers)].push(towers[small_loci].pop())
+            small_loci = (small_loci + direction) % len(towers)
+        else:
+            for i in range(0, num_towers):
+                if i == small_loci or len(towers[i]) == 0:
+                    continue
+                for j in range(0, num_towers):
+                    if i != j and (len(towers[j])==0 or towers[i].peek() < towers[j].peek()): #found the one valid move
+                        towers[j].push(towers[i].pop())
+                        break
+                else:
+                    continue
+                break
+        smallest_move = not smallest_move
+    print_towers(towers, discs)    
+
 def hanoi(begin: Stack[int], end: Stack[int], temp: Stack[int], n: int) -> None:
 
     if n == 1:
@@ -41,25 +79,9 @@ def hanoi(begin: Stack[int], end: Stack[int], temp: Stack[int], n: int) -> None:
         hanoi(begin, end, temp, 1)
         hanoi(temp, end, begin, n-1)
 
-# 1.7 challenge exercise question 3
-# implement iter solution for tower of hanoi and variable number of towers
-def hanoi_iter(towers: list[Stack[int]], discs: int, num_towers: int) -> None:
-    smallest_move: bool = True
-    start: Stack[int] = towers[0]
-    end: Stack[int] = towers[num_towers-1]
-
-    #end condition:
-    while(len(end) < discs):
-        if(smallest_move):
-            
-    pass
-
-    
-
-
 
 def main():
-    num_discs: int = 6
+    num_discs: int = 8
     num_towers: int = 3
     towers: list[Stack[int]] = []
     for i in range(num_towers):
@@ -69,9 +91,8 @@ def main():
     for i in range(num_discs, 0, -1):
         towers[0].push(i)
 
-    print_towers(towers, num_discs)
     #hanoi(twr_a, twr_c, twr_b, num_discs)
-
+    hanoi_iter(towers, num_discs, num_towers)
 
 if __name__ == "__main__":
     main()
