@@ -2,36 +2,43 @@ from __future__ import annotations
 from enum import IntEnum, auto
 from typing import TypeVar, Iterable, Sequence, Any, Protocol
 
-T = TypeVar('T')
-C = TypeVar('C', bound='Comparable')
-
-class Comparable(Protocol):
-    def __eq__(self, other: Any) -> bool:
-        ...
-
-    def __lt__(self: C, other: C) -> bool:
-        ...
-    
-    def __gt__(self: C, other: C) -> bool:
-        return (not self < other) and self != other
-    
-    def __le__(self: C, other: C) -> bool:
-        return self < other or self == other
-    
-    def __ge__(self: C, other: C) -> bool:
-        return not self < other
-
-
 class Nucleotide(IntEnum):
     A = auto()
     C = auto()
     G = auto()
     T = auto()
 
-#Codon: TypeAlias = Tuple[Nucleotide, Nucleotide, Nucleotide]
-#Gene: TypeAlias = List[Codon]
 type Codon = tuple[Nucleotide, Nucleotide, Nucleotide]
 type Gene = list[Codon]
+
+T = TypeVar('T')
+def linear_contains(iterable: Iterable[T], key: T) -> bool:
+    for item in iterable:
+        if item == key:
+            return True
+    return False
+
+
+
+C = TypeVar("C", bound="Comparable")
+
+class Comparable(Protocol):
+    def __eq__(self, other: Any, /) -> bool:
+        ...
+
+    def __lt__(self: C, other: C, /) -> bool:
+        ...
+
+    def __gt__(self: C, other: C, /) -> bool:
+        return (not self < other) and self != other
+
+    def __le__(self: C, other: C, /) -> bool:
+        return self < other or self == other
+
+    def __ge__(self: C, other: C, /) -> bool:
+        return not self < other
+
+
 
 
 def str_to_gene(s: str) -> Gene:
@@ -43,11 +50,7 @@ def str_to_gene(s: str) -> Gene:
         gene.append(codon)
     return gene
 
-def linear_contains(iterable: Iterable[T], key: T) -> bool:
-    for item in iterable:
-        if item == key:
-            return True
-    return False
+
 
 def binary_contains(sequence: Sequence[C], key: C) -> bool:
     low: int = 0
@@ -64,8 +67,9 @@ def binary_contains(sequence: Sequence[C], key: C) -> bool:
     return False
 
 
-gene_str: str = "CGTGGCTCTCTAACGTACGTACGTACGGGGTTTATATATACCCTAGGATCCCTTT"
+gene_str: str = "GGGGGCTCTCTAACGTACGTACGTACAAAAAAATTTATATATACCCTAGGATCCCTTT"
 gene = str_to_gene(gene_str)
+gene.sort()
 
 ggg: Codon = (Nucleotide.G, Nucleotide.G, Nucleotide.G)
 print(linear_contains(gene, ggg))
