@@ -1,8 +1,8 @@
 from enum import StrEnum
-from typing import NamedTuple, Optional
+from typing import NamedTuple, Optional, Callable
 import random
-#from math import sqrt
-from generic_search import dfs, bfs, node_to_path, Node
+from math import sqrt
+from generic_search import dfs, bfs, astar, node_to_path, Node
 
 class Cell(StrEnum):
     EMPTY = " "
@@ -69,13 +69,28 @@ class Maze:
         if ml.col - 1 >= 0 and self._grid[ml.row][ml.col-1] != Cell.BLOCKED:
             locations.append(MazeLocation(ml.row, ml.col-1))
         return locations
-            
+
+def euclidian_dist(goal: MazeLocation) -> Callable[[MazeLocation], float]:
+    def distance(ml: MazeLocation) -> float:
+        xdist: int = ml.col - goal.col
+        ydist: int = ml.row - goal.row
+        return sqrt((xdist * xdist) + (ydist * ydist))
+    return distance
+
+def manhattan_dist(goal: MazeLocation) -> Callable[[MazeLocation], float]:
+    def distance(ml: MazeLocation) -> float:
+        xdist: int = abs(ml.col - goal.col)
+        ydist: int = abs(ml.row - goal.row)
+        return (xdist + ydist)
+    return distance
 
 def main() -> None:
-    m: Maze = Maze(rows=50, cols=50, goal=MazeLocation(49, 49), sparseness=0.0)
+    m: Maze = Maze(rows=50, cols=50, goal=MazeLocation(49, 49), sparseness=0.14)
+    #m: Maze = Maze()
     print(m)
     sol_1: Optional[Node[MazeLocation]] = dfs(m.start, m.goal_test, m.successors)
     if sol_1 is not None:
+        print('dfs')
         path_1: list[MazeLocation] = node_to_path(sol_1)
         m.mark(path_1)
         print(m)
@@ -85,6 +100,7 @@ def main() -> None:
     
     sol_2: Optional[Node[MazeLocation]] = bfs(m.start, m.goal_test, m.successors)
     if sol_2 is not None:
+        print('bfs')
         path_2: list[MazeLocation] = node_to_path(sol_2)
         m.mark(path_2)
         print(m)
@@ -92,5 +108,14 @@ def main() -> None:
     else:
         print('no solution for bfs')
 
+    sol_3: Optional[Node[MazeLocation]] = astar(m.start, m.goal_test, m.successors, manhattan_dist(m.goal))
+    if sol_3 is not None:
+        print('astar')
+        path_3: list[MazeLocation] = node_to_path(sol_3)
+        m.mark(path_3)
+        print(m)
+        m.clear(path_3)
+    else:
+        print("no solution found for astar")
 if __name__ == "__main__":
     main()
