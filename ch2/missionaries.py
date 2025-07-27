@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional
 from generic_search import Node, dfs, bfs, node_to_path
-MAX_M: int = 3
-MAX_C: int = 2
+MAX_M: int = 2
+MAX_C: int = 3
 
 class MCState:
     def __init__(self, missionaries: int, cannibals: int, boat: bool) -> None:
