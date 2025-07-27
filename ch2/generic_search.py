@@ -90,58 +90,76 @@ def node_to_path(node: Node[T]) -> list[T]:
     path.reverse()
     return path
 
-def dfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]]) -> Optional[Node[T]]:
+#updated dfs, bfs, astar to include immutable count paramter default to None for backwards compatibility
+#challenge question 2 in chapter 2
+def dfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]], count_l: Optional[list[int]]=None) -> Optional[Node[T]]:
     """depth first search implementation"""
     frontier: Stack[Node[T]] = Stack()
     frontier.push(Node(initial, None)) # put starting point on stack, no parent
     explored: set[T] = {initial}
-
+    count: int = 0
     while not frontier.empty:
+        count += 1
         current_node: Node[T] = frontier.pop()
         current_state: T = current_node.state
         if goal_test(current_state):
+            if count_l is not None:
+                count_l.append(count)
             return current_node
         for child in successors(current_state):
             if child in explored:
                 continue
             explored.add(child)
             frontier.push(Node(child, current_node))
+    if count_l is not None:
+        count_l.append(count)
     return None
 
-def bfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]]) -> Optional[Node[T]]:
+def bfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]], count_l: Optional[list[int]]=None) -> Optional[Node[T]]:
+
     """breadth first search implementation"""
     frontier: Queue[Node[T]] = Queue()
     frontier.push(Node(initial, None))
     explored: set[T] = {initial}
-
+    count: int = 0
     while not frontier.empty:
+        count += 1
         current_node: Node[T] = frontier.pop()
         current_state: T = current_node.state
         if goal_test(current_state):
+            if count_l is not None:
+                count_l.append(count)
             return current_node
         for child in successors(current_state):
             if child in explored:
                 continue
             explored.add(child)
             frontier.push(Node(child, current_node))
+    if count_l is not None:
+        count_l.append(count)
     return None
 
-def astar(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]], heuristic: Callable[[T], float]) -> Optional[Node[T]]:
+def astar(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]], heuristic: Callable[[T], float], count_l: Optional[list[int]]=None) -> Optional[Node[T]]:
     """a* implementation - cost function acceptable for grid based problems"""
     frontier: PriorityQueue[Node[T]] = PriorityQueue()
     frontier.push(Node(initial, None, 0.0, heuristic(initial)))
     explored: dict[T, float] = {initial: 0.0}
-
+    count = 0
     while not frontier.empty:
+        count += 1
         current_node: Node[T] = frontier.pop()
         current_state: T = current_node.state
         if goal_test(current_state):
+            if count_l is not None:
+                count_l.append(count)
             return current_node 
         for child in successors(current_state):
             new_cost: float = current_node.cost + 1
             if child not in explored or explored[child] > new_cost:
                 explored[child] = new_cost
                 frontier.push(Node(child, current_node, new_cost, heuristic(child)))
+    if count_l is not None:
+        count_l.append(count)
     return None
 
 def linear_contains(iterable: Iterable[T], key: T) -> bool:

@@ -84,9 +84,24 @@ def manhattan_dist(goal: MazeLocation) -> Callable[[MazeLocation], float]:
         return (xdist + ydist)
     return distance
 
+def compare_search(maze: Maze) -> None:
+    dfs_count: list[int] = []
+    bfs_count: list[int] = []
+    asr_count: list[int] = []
+
+    for _ in range(0, 100):
+        dfs(maze.start, maze.goal_test, maze.successors, dfs_count)
+        bfs(maze.start, maze.goal_test, maze.successors, bfs_count)
+        astar(maze.start, maze.goal_test, maze.successors, manhattan_dist(maze.goal), asr_count)
+    
+    print(f"Average nodes traversed by dfs: {sum(dfs_count) // len(dfs_count)}")
+    print(f"Average nodes traversed by bfs: {sum(bfs_count) // len(bfs_count)}")
+    print(f"Average nodes traversed by ast: {sum(asr_count) // len(asr_count)}")
+
+
 def main() -> None:
-    m: Maze = Maze(rows=50, cols=50, goal=MazeLocation(49, 49), sparseness=0.14)
-    #m: Maze = Maze()
+    
+    m: Maze = Maze(rows=50, cols=50, goal=MazeLocation(49, 38), sparseness=0.23)
     print(m)
     sol_1: Optional[Node[MazeLocation]] = dfs(m.start, m.goal_test, m.successors)
     if sol_1 is not None:
@@ -117,5 +132,7 @@ def main() -> None:
         m.clear(path_3)
     else:
         print("no solution found for astar")
+    
+    compare_search(m)
 if __name__ == "__main__":
     main()
