@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import TypeVar, Iterable, Sequence, Any, Protocol, Generic, Optional, Callable
+from collections import deque
 
 
 
@@ -40,6 +41,23 @@ class Stack(Generic[T]):
     def __repr__(self) -> str:
         return repr(self._container)
 
+class Queue(Generic[T]):
+    def __init__(self) -> None:
+        self._container: deque[T] = deque()
+    
+    @property
+    def empty(self) -> bool:
+        return not self._container
+    
+    def push(self, item: T) -> None:
+        self._container.append(item)
+    
+    def pop(self) -> T:
+        return self._container.popleft()
+    
+    def __repr__(self) -> str:
+        return repr(self._container)
+
 class Node(Generic[T]):
     def __init__(self, state: T, parent: Optional[Node[T]], cost: float=0.0, heuristic:float=0.0) -> None:
         self.state: T = state
@@ -75,6 +93,24 @@ def dfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], li
             frontier.push(Node(child, current_node))
     return None
 
+def bfs(initial: T, goal_test: Callable[[T], bool], successors: Callable[[T], list[T]]) -> Optional[Node[T]]:
+    """breadth first search implementation"""
+    frontier: Queue[Node[T]] = Queue()
+    frontier.push(Node(initial, None))
+    explored: set[T] = {initial}
+
+    while not frontier.empty:
+        current_node: Node[T] = frontier.pop()
+        current_state: T = current_node.state
+        if goal_test(current_state):
+            return current_node
+        for child in successors(current_state):
+            if child in explored:
+                continue
+            explored.add(child)
+            frontier.push(Node(child, current_node))
+    return None
+
 def linear_contains(iterable: Iterable[T], key: T) -> bool:
     for item in iterable:
         if item == key:
@@ -94,3 +130,9 @@ def binary_contains(sequence: Sequence[C], key: C) -> bool:
         else:
             return True
     return False
+
+
+a: Queue[int] = Queue()
+a.push(1)
+print(a)
+print(deque)

@@ -1,8 +1,8 @@
 from enum import StrEnum
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 import random
 #from math import sqrt
-#from generic_search import dfs, bfs, node_to_path, astar, Node
+from generic_search import dfs, bfs, node_to_path, Node
 
 class Cell(StrEnum):
     EMPTY = " "
@@ -35,6 +35,18 @@ class Maze:
                 if random.uniform(0, 1.0) < sparseness:
                     self._grid[row][col] = Cell.BLOCKED
     
+    def mark(self, path: list[MazeLocation]):
+        for loc in path:
+            self._grid[loc.row][loc.col] = Cell.PATH
+        self._grid[self.start.row][self.start.col] = Cell.START
+        self._grid[self.goal.row][self.goal.col] = Cell.GOAL
+
+    def clear(self, path: list[MazeLocation]):
+        for loc in path:
+            self._grid[loc.row][loc.col] = Cell.EMPTY
+        self._grid[self.start.row][self.start.col] = Cell.START
+        self._grid[self.goal.row][self.goal.col] = Cell.GOAL
+
     def __str__(self) -> str:
         maze: str = ''
         for row in range(self._rows):
@@ -58,6 +70,27 @@ class Maze:
             locations.append(MazeLocation(ml.row, ml.col-1))
         return locations
             
-grid: Maze = Maze(sparseness=0.0)
-print(grid)
-print(grid.successors(MazeLocation(5,5)))
+
+def main() -> None:
+    m: Maze = Maze(rows=20, cols=20, goal=MazeLocation(14, 15))
+    print(m)
+    sol_1: Optional[Node[MazeLocation]] = dfs(m.start, m.goal_test, m.successors)
+    if sol_1 is not None:
+        path_1: list[MazeLocation] = node_to_path(sol_1)
+        m.mark(path_1)
+        print(m)
+        m.clear(path_1)
+    else:
+        print('no solution found for dfs')
+    
+    sol_2: Optional[Node[MazeLocation]] = bfs(m.start, m.goal_test, m.successors)
+    if sol_2 is not None:
+        path_2: list[MazeLocation] = node_to_path(sol_2)
+        m.mark(path_2)
+        print(m)
+        m.clear(path_2)
+    else:
+        print('no solution for bfs')
+
+if __name__ == "__main__":
+    main()
