@@ -72,7 +72,7 @@ class Maze:
             
 
 def main() -> None:
-    m: Maze = Maze(rows=20, cols=20, goal=MazeLocation(14, 15))
+    m: Maze = Maze(rows=50, cols=50, goal=MazeLocation(49, 49), sparseness=0.0)
     print(m)
     sol_1: Optional[Node[MazeLocation]] = dfs(m.start, m.goal_test, m.successors)
     if sol_1 is not None:
