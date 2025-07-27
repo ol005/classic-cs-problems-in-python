@@ -163,9 +163,3 @@ def binary_contains(sequence: Sequence[C], key: C) -> bool:
         else:
             return True
     return False
-
-
-a: Queue[int] = Queue()
-a.push(1)
-print(a)
-print(deque)
