@@ -47,19 +47,19 @@ def display_solution(path: list[str]) -> None:
             print(" -> ", end='')
 
 def main() -> None:
-    g: WLGame = WLGame('crate', 'black')
+    g: WLGame = WLGame('respect', 'brother')
     count_b: list[int] = []
     count_a: list[int] = []
     solution: Optional[Node[str]] = bfs(g.start, g.goal_seek, g.successors, count_l=count_b)
     if solution is not None:
         path: list[str] = node_to_path(solution)
         display_solution(path)
-        print(f"\nnum of search states: {count_b[0]}")
+        print(f"\nbfs num of search states: {count_b[0]}")
 
     solution_a: Optional[Node[str]] = astar(g.start, g.goal_seek, g.successors, letters_diff(g.end), count_l=count_a)
     if solution_a is not None:
         path_2: list[str] = node_to_path(solution_a)
         display_solution(path_2)
-        print(f"\nNumber of search states: {count_a[0]}")
+        print(f"\na* num of search states: {count_a[0]}")
 if __name__ == '__main__':
     main()
