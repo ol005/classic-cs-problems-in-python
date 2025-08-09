@@ -44,7 +44,7 @@ class CSP(Generic[V, D]):
         # base case, assignment done if every variable is assigned
         if len(assignment) == len(self.variables):
             return assignment
-        print(assignment)
+        #print(assignment)
         unassigned: list[V] = [v for v in self.variables if v not in assignment]
 
         first: V = unassigned[0]
