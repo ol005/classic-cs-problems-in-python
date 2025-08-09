@@ -47,7 +47,7 @@ def display_solution(path: list[str]) -> None:
             print(" -> ", end='')
 
 def main() -> None:
-    g: WLGame = WLGame('respect', 'brother')
+    g: WLGame = WLGame('hello', 'adieu')
     count_b: list[int] = []
     count_a: list[int] = []
     solution: Optional[Node[str]] = bfs(g.start, g.goal_seek, g.successors, count_l=count_b)
